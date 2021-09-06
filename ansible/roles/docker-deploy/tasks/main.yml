@@ -1,0 +1,14 @@
+---
+- name: Install Docker Module for Python
+  pip:
+    name: docker
+    state: present
+
+- name: Run a container
+  docker_container:
+    name: web_application
+    image: "bogotolec/devops_web_app"
+    state: present
+    ports: "8888:8888"
+
+# from https://www.digitalocean.com/community/tutorials/how-to-use-ansible-to-install-and-set-up-docker-on-ubuntu-18-04#playbook-yml

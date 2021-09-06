@@ -1,0 +1,8 @@
+---
+- name: Web application
+  hosts: all
+  become: true
+  roles:
+    - ../roles/docker-install
+    - ../roles/pip-install
+    - ../roles/docker-deploy

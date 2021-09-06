@@ -1,0 +1,2 @@
+vagrant/.vagrant
+ansible/playbooks/main.retry

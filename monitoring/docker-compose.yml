@@ -1,0 +1,117 @@
+version: '3.9'
+
+services:
+  web_application:
+    container_name: monitoring.web
+    image: bogotolec/devops_web_app
+    expose:
+      - 8888
+    ports:
+      - "8888:8888"
+    networks:
+      - monitoring.network
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "100m"
+        max-file: "10"
+        tag: "{{.ImageName}}|{{.Name}}"
+
+  grafana:
+    build:
+      context: ${PWD}/grafana
+      args:
+        - GRAFANA_VERSION=${GRAFANA_VERSION}
+    container_name: monitoring.grafana
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ${PWD}/grafana/provisioning:/etc/grafana/provisioning
+    environment:
+      - GF_SECURITY_ADMIN_USER=${ADMIN_USER:-admin}
+      - GF_SECURITY_ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin}
+      - GF_USERS_ALLOW_SIGN_UP=false
+      - GF_EXPLORE_ENABLED=true
+      - VIRTUAL_HOST=monitoring.grafana
+      - NETWORK_ACCESS=internal
+      - VIRTUAL_PORT=3000
+    restart: unless-stopped
+    expose:
+      - 3000
+    ports:
+      - "3000:3000"
+    networks:
+      - monitoring.network
+    labels:
+      org.label-schema.group: "monitoring"
+
+  promtail:
+    image: grafana/promtail:${LOKI_VERSION}
+    container_name: monitoring.promtail
+    expose:
+      - 9080
+    ports:
+      - "9080:9080"
+    volumes:
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - promtail-data:/var/lib/promtail/positions
+      - ${PWD}/promtail/promtail.yml:/etc/promtail/promtail.yml
+    command:
+      - '-config.file=/etc/promtail/promtail.yml'
+    restart: unless-stopped
+    networks:
+      - monitoring.network
+    labels:
+      org.label-schema.group: "monitoring"
+
+  loki:
+    container_name: monitoring.loki
+    image: grafana/loki:${LOKI_VERSION}
+    expose:
+      - 3100
+    ports:
+      - "3100:3100"
+    volumes:
+      - ${PWD}/loki/loki-config.yml:/etc/loki-config.yml
+    command: -config.file=/etc/loki-config.yml
+    restart: unless-stopped
+    networks:
+      - monitoring.network
+    labels:
+      org.label-schema.group: "monitoring"
+
+  prometheus:
+    image: prom/prometheus:${PROMETHEUS_VERSION}
+    container_name: monitoring.prometheus
+    volumes:
+      - ${PWD}/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--storage.tsdb.retention.time=14d'
+      - '--web.enable-lifecycle'
+      - '--storage.tsdb.wal-compression'
+      - '--storage.tsdb.max-block-duration=4h'
+      - '--storage.tsdb.wal-segment-size=60MB'
+      - '--storage.tsdb.allow-overlapping-blocks'
+      - '--query.max-samples=5000000'
+    restart: unless-stopped
+    expose:
+      - 9090
+    networks:
+      - monitoring.network
+    labels:
+      org.label-schema.group: "monitoring"
+
+networks:
+  monitoring.network:
+    ipam:
+      driver: default
+
+volumes:
+  prometheus-data: {}
+  grafana-data: {}
+  loki-data: {}
+  promtail-data: {}

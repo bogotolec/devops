@@ -19,5 +19,11 @@ This repository uses stack of following tools: grafana, promtail, loki.
 ![Grafana](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/grafana.png)
  * Loki
 ![Loki](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/loki.png)
- * Prometheus
+ * Loki dashboard
+![Loki](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/loki_dashboard.png)
+ * Prometheus in Grafana
 ![Prometheus](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/prometheus.png)
+ * Prometheus interface
+![Prometheus](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/prometheus_interface.png)
+ * Prometheus dashboard
+![Prometheus](https://github.com/bogotolec/devops/blob/master/monitoring/screenshots/prometheus_dashboard.png)

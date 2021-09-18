@@ -26,3 +26,17 @@ service/devops-web-app-service   LoadBalancer   10.110.175.7   127.0.0.1     888
 service/kubernetes               ClusterIP      10.96.0.1      <none>        443/TCP          26m
 ```
 
+## Output of `kubectl get pods,svc` (lab 10)
+
+```
+NAME                                             READY   STATUS    RESTARTS   AGE
+pod/devops-web-app-6fbffc69cb-756qh              1/1     Running   0          4m3s
+pod/devops-web-app-deployment-7f644dfbf5-rsd8f   1/1     Running   0          35m
+pod/devops-web-app-deployment-7f644dfbf5-sbbgs   1/1     Running   0          34m
+pod/devops-web-app-deployment-7f644dfbf5-zvrt9   1/1     Running   0          34m
+
+NAME                             TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+service/devops-web-app           ClusterIP      10.110.13.252   <none>        8888/TCP         4m3s
+service/devops-web-app-service   LoadBalancer   10.110.175.7    127.0.0.1     8888:30211/TCP   34m
+service/kubernetes               ClusterIP      10.96.0.1       <none>        443/TCP          60m
+```

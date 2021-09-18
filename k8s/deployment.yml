@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: devops-web-app-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: devops-web-app
+  template:
+    metadata:
+      labels:
+        app: devops-web-app
+    spec:
+      containers:
+      - name: devops-web-app
+        image: bogotolec/devops_web_app:latest
+        ports:
+        - containerPort: 8888

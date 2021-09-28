@@ -10,12 +10,8 @@ services:
       - "8888:8888"
     networks:
       - monitoring.network
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "100m"
-        max-file: "10"
-        tag: "{{.ImageName}}|{{.Name}}"
+    volumes:
+      - logs:/app/logs
 
   grafana:
     build:
@@ -115,3 +111,4 @@ volumes:
   grafana-data: {}
   loki-data: {}
   promtail-data: {}
+  logs: {}

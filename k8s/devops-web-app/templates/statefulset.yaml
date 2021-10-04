@@ -1,10 +1,12 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: {{ include "devops-web-app.fullname" . }}
   labels:
     {{- include "devops-web-app.labels" . | nindent 4 }}
 spec:
+  serviceName: {{ .Values.service.name }}
+  podManagementPolicy: {{ .Values.statefulSet.podManagementPolicy }}
   {{- if not .Values.autoscaling.enabled }}
   replicas: {{ .Values.replicaCount }}
   {{- end }}
@@ -39,8 +41,10 @@ spec:
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           volumeMounts:
             - name: config-volume
-              mountPath: /config
+              mountPath: {{ .Values.volumes.config }}
               readOnly: true
+            - name: visits
+              mountPath: {{ .Values.volumes.visits }}
           env:
             - name: nothingimportant
               valueFrom:
@@ -73,3 +77,8 @@ spec:
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
+  volumeClaimTemplates:
+    - metadata:
+        name: visits
+      spec:
+        {{- toYaml .Values.statefulSet.volumeClaimTemplates.spec | nindent 8 }}
